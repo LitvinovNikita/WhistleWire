@@ -9,8 +9,11 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js"
-import userRoutes from "./routes/users.js"
+import userRoutes from "./routes/users.js";
+import postRoutes from "./routes/posts.js";
 import {register} from "./controllers/auth.js"
+import {createPost} from "./controllers/posts.js"
+import { verifyToken } from "./middleware/auth.js";
 
 
 /*Configurations*/
@@ -43,14 +46,18 @@ const upload = multer({storage});
 
 
 
-/*Routes with Files*/
-app.post("/auth/register", upload.single("picture"), register);
+/*ROUTES WITH FILES*/
+/*this will allow us to communicate with the front-end */
+app.post("/auth/register", upload.single("picture"), register); // registering user 
+app.post("/posts", verifyToken, upload.single("picture"), createPost); // creating a post
+
+
 
 
 /**Routes */
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
-
+app.use("/ports", postRoutes);
 
 
 
